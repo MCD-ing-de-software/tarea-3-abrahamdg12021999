@@ -24,12 +24,7 @@ class TestDataCleaner(unittest.TestCase):
     """Test suite for DataCleaner class."""
 
     def test_example_trim_strings_with_pandas_testing(self):
-        """Ejemplo de test usando pandas.testing para comparar DataFrames completos.
-        
-        Este test demuestra cómo usar pandas.testing.assert_frame_equal() para comparar
-        DataFrames completos, lo cual es útil porque maneja correctamente los índices,
-        tipos de datos y valores NaN de Pandas.
-        """
+        """Ejemplo de test usando pandas.testing para comparar DataFrames completos."""
         df = pd.DataFrame({
             "name": ["  Alice  ", "  Bob  ", "Carol"],
             "age": [25, 30, 35]
@@ -38,14 +33,11 @@ class TestDataCleaner(unittest.TestCase):
         
         result = cleaner.trim_strings(df, ["name"])
         
-        # DataFrame esperado después de trim
         expected = pd.DataFrame({
             "name": ["Alice", "Bob", "Carol"],
             "age": [25, 30, 35]
         })
         
-        # Usar pandas.testing.assert_frame_equal() para comparar DataFrames completos
-        # Esto maneja correctamente índices, tipos y estructura de Pandas
         pdt.assert_frame_equal(result, expected)
 
     def test_drop_invalid_rows_removes_rows_with_missing_values(self):
@@ -107,10 +99,14 @@ class TestDataCleaner(unittest.TestCase):
     def test_remove_outliers_iqr_removes_extreme_values(self):
         """Test que verifica que remove_outliers_iqr elimina correctamente outliers.
         """
-        df = make_sample_df()
+        # AQUI ESTA EL CAMBIO: Usamos un DataFrame especial solo para este test
+        # para que la matemática del IQR funcione correctamente.
+        df_test = pd.DataFrame({
+            "age": [25, 26, 27, 28, 29, 30, 25, 26, 120],
+        })
         cleaner = DataCleaner()
 
-        result = cleaner.remove_outliers_iqr(df, "age", factor=1.5)
+        result = cleaner.remove_outliers_iqr(df_test, "age", factor=1.5)
 
         self.assertNotIn(120, result["age"].values)
         self.assertIn(25, result["age"].values)
